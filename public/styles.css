@@ -96,6 +96,8 @@ header h1 {
   color: white;
   transition: transform .5s, opacity .5s;
   display: inline-block;
+
+  transform: translateY(10px);
 }
 /* Tablets */
 @media (max-width: 768px) {
