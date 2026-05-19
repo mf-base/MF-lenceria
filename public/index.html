@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FM | Florencia Marcon</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Tu CSS -->
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Font Awesome -->
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+    .text-pink { color: #f06292; }
+    .bg-pink { background-color: #f06292 !important; }
+    .navbar-brand {
+      font-weight: bold;
+      background: linear-gradient(to right, #f06292, #fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    section { padding: 60px 0; }
+  </style>
+</head>
+<body>
+
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
+      <form class="d-flex me-3" role="search" onsubmit="return false;">
+  <div class="search-wrapper position-relative">
+    <input id="searchInput" type="text" class="form-control search-input" placeholder="Buscar..." />
+    <i class="fas fa-search search-icon"></i>
+  </div>
+</form>
+
+
+      <a class="navbar-brand mx-auto" href="#">FM · FLORENCIA MARCON</a>
+      <div class="d-flex align-items-center">
+  <a href="#" class="text-white me-3" data-bs-toggle="modal" data-bs-target="#cartModal">
+   
+  </a>
+</div>
+
+      <button class="navbar-toggler ms-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-center mt-3 mt-lg-0" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item mx-2"><a class="nav-link text-white fw-bold" href="#home">INICIO<span class="text-pink">+</span></a></li>
+          <li class="nav-item mx-2"><a class="nav-link text-white fw-bold" href="#about">SOBRE MÍ<span class="text-pink">+</span></a></li>
+          <li class="nav-item mx-2"><a class="nav-link text-white fw-bold" href="#products">PRODUCTOS<span class="text-pink">+</span></a></li>
+          <li class="nav-item mx-2"><a class="nav-link text-white fw-bold" href="#contacts">CONTACTO<span class="text-pink">+</span></a></li>
+          <li class="nav-item mx-2"><a class="nav-link text-white fw-bold" href="admin.html">ADMIN<span class="text-pink">+</span></a></li>
+        <li class="nav-item mx-2 position-relative">
+  <a class="nav-link text-white fw-bold" href="#" data-bs-toggle="modal" data-bs-target="#cartModal">
+    <i class="fas fa-shopping-cart"></i> Carrito
+    <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+      0
+    </span>
+  </a>
+</li>
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HOME -->
+  <section id="home" class="mt pt-5">
+    <header>
+      <h1 class="text-center py-2" id="titulo-dinamico">Lencería</h1>
+    </header>
+    <div class="swiper home-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <img src="./assets/fm-banner-1.png" class="d-block w-100" alt="Hero 1">
+        </div>
+        <div class="swiper-slide">
+          <img src="./assets/fm-banner-2.png" class="d-block w-100" alt="Hero 2">
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ABOUT US -->
+  <section id="about" class="container">
+    <h1 class="text-center mb-4">SOBRE MÍ</h1>
+<h1 style="color:#c94f6d; text-align:center; margin-bottom: 1rem;">
+  ¡Hola! Soy Florencia Marcon
+</h1>
+
+<p style="color:#fff; max-width:600px; margin:auto; text-align:center;">
+  Este espacio fue creado con dedicación para ofrecer una experiencia de compra cercana, cuidada y personalizada.
+</p>
+
+<div class="compromiso">
+  <h1>Mi compromiso</h1>
+</div>
+
+<p style="color:#fff; max-width:600px; margin:auto; text-align:center;">
+  Mi objetivo es que cada producto llegue con buena presentación, atención clara y una experiencia de compra simple. Cada detalle está pensado para que puedas elegir con confianza.
+</p>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="products" class="container">
+    <h2 class="text-center mb-4">Productos</h2>
+<div class="currency-toggle-wrap">
+  <span class="toggle-text">ARS</span>
+
+  <label class="switch">
+    <input type="checkbox" id="currencyToggle">
+    <span class="slider round"></span>
+  </label>
+
+  <span class="toggle-text">USD</span>
+</div>
+<!-- Fila de categorías visuales -->
+<div class="row mb-5">
+  <div class="col-md-3 col-6 mb-3 category-btn" data-category="estimuladores">
+    <img src="./assets/portada-seccion (4).svg" alt="Estimuladores" class="img-fluid rounded" >
+    <h5 class="text-center mt-2">Estimuladores</h5>
+  </div>
+  <div class="col-md-3 col-6 mb-3 category-btn" data-category="fetish">
+    <img src="./assets/portada-seccion (1).svg" alt="Fetish & Sado" class="img-fluid rounded" >
+    <h5 class="text-center mt-2">Fetish & Sado</h5>
+  </div>
+  <div class="col-md-3 col-6 mb-3 category-btn" data-category="juegos">
+    <img src="./assets/portada-seccion (2).svg" alt="Juegos" class="img-fluid rounded" > 
+    <h5 class="text-center mt-2">Juegos</h5>
+  </div>
+  <div class="col-md-3 col-6 mb-3 category-btn" data-category="lenceria">
+    <img src="./assets/portada-seccion (3).svg" alt="Lencería" class="img-fluid rounded" >
+    <h5 class="text-center mt-2">Lencería</h5>
+  </div>
+</div>
+
+<!-- Contenedores por categoría -->
+<div id="cat-estimuladores" class="row mb-5 catalog-category" style="display:none"></div>
+<div id="cat-fetish" class="row mb-5 catalog-category" style="display:none"></div>
+<div id="cat-juegos" class="row mb-5 catalog-category" style="display:none"></div>
+<div id="cat-lenceria" class="row mb-5 catalog-category" style="display:none"></div>
+<p id="noResultsMsg" class="text-center text-white" style="display:none;">No se encontraron productos.</p>
+
+
+
+ <!-- CONTACTO REDES SOCIALES CON ESTILO UNICO -->
+<section id="contacts" class="container text-center">
+  <h2 class="mb-4">Contacto</h2>
+  <div class="custom-social-container">
+    <ul class="custom-social-list">
+<li>
+  <a href="#" target="_blank" class="custom-social-link facebook">
+    <i class="fab fa-facebook" aria-hidden="true"></i>
+    <span>Facebook</span>
+  </a>
+</li>
+<li>
+  <a href="https://wa.me/5491168240340" target="_blank" class="custom-social-link google">
+    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+    <span>WhatsApp</span>
+  </a>
+</li>
+<li>
+  <a href="#" target="_blank" class="custom-social-link instagram">
+    <i class="fab fa-instagram" aria-hidden="true"></i>
+    <span>Instagram</span>
+  </a>
+</li>
+    </ul>
+  </div>
+</section>
+<!-- FOOTER -->
+  <footer class="text-center py-4">
+    <p>&copy; 2026 FM Florencia Marcon. Todos los derechos reservados. Contactanos por <a href="https://wa.me/5491168240340" class="text-success">WhatsApp</a>.</p>
+  </footer>
+
+  <!-- Bootstrap Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Swiper -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <!-- JS -->
+  <script src="main.js"></script>
+
+  <script>
+    const textos = ["Lencería", "Sex Shop"];
+    let index = 0;
+    const titulo = document.getElementById("titulo-dinamico");
+    setInterval(() => {
+      titulo.classList.add("salida");
+      setTimeout(() => {
+        index = (index + 1) % textos.length;
+        titulo.textContent = textos[index];
+        titulo.classList.remove("salida");
+        titulo.classList.add("entrada");
+        setTimeout(() => titulo.classList.remove("entrada"), 500);
+      }, 500);
+    }, 3000);
+  </script>
+
+  <!-- MODAL -->
+  <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="productModalLabel"></h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center">
+          <img id="productModalImage" src="" alt="" class="img-fluid rounded mb-3" style="max-height:500px; object-fit:cover;">
+          <p id="productModalDescription"></p>
+           <p id="productModalPrice" class="fw-bold mt-2"></p> <!-- ← ESTO VA ACÁ -->
+          <button id="productModalBuyBtn" class="btn btn-whatsapp w-100 mt-2">Comprar por WhatsApp</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE CARRITO -->
+<div class="modal fade" id="cartModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">Tu Carrito</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <ul id="cart-items" class="list-group list-group-flush text-white"></ul>
+        <div class="mt-3 text-end">
+          <strong>Total: <span id="cart-total">0</span> producto(s)</strong>
+        </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Seguir comprando</button>
+        <button class="btn btn-whatsapp" onclick="sendCartToWhatsApp()">Finalizar compra</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
