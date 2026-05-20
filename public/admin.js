@@ -235,8 +235,50 @@ function exportProducts() {
 async function importProducts(event) {
   const file = event.target.files?.[0];
   if (!file) return;
-  showMessage('Importación JSON no automática: usá el formulario para cargar productos nuevos o restaurá el catálogo original.', 'warning');
-  event.target.value = '';
+
+  try {
+    const text = await file.text();
+    const imported = JSON.parse(text);
+
+    if (!Array.isArray(imported)) {
+      throw new Error('El JSON debe ser una lista de productos.');
+    }
+
+    if (!confirm(`Se van a importar ${imported.length} productos. ¿Continuar?`)) {
+      event.target.value = '';
+      return;
+    }
+
+    let importedCount = 0;
+
+    for (const item of imported) {
+      const product = {
+        name: item.name || item.nombre || '',
+        category: item.category || item.categoria || 'lenceria',
+        price: Number(item.price || item.precio || 1),
+        description: item.description || item.descripcion || '',
+        images: item.images || item.imagenes || item.image ? [item.image] : [],
+        visible: item.visible !== false
+      };
+
+      if (!product.name) continue;
+
+      await api('/api/products', {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify(product)
+      });
+
+      importedCount++;
+    }
+
+    await loadProducts();
+    showMessage(`${importedCount} productos importados correctamente.`, 'success');
+  } catch (error) {
+    showMessage(`Error al importar JSON: ${error.message}`, 'danger');
+  } finally {
+    event.target.value = '';
+  }
 }
 
 async function resetToDefault() {
