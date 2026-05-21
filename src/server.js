@@ -185,7 +185,7 @@ async function uploadToSupabaseStorage(file) {
 
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: '250mb' }));
+app.use(express.json({ limit: '150mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(PUBLIC_DIR));
 
