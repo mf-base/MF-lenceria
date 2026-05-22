@@ -165,7 +165,7 @@ function openProductModal(index) {
 
   const buyBtn = document.getElementById('productModalBuyBtn');
   buyBtn.onclick = () => window.location.href =
-    `https://wa.me/5491168240340?text=Quiero comprar ${encodeURIComponent(product.name)}`;
+    `https://wa.me/5491124848452?text=Quiero comprar ${encodeURIComponent(product.name)}`;
 
 let currentImage = 0;
 
@@ -346,7 +346,7 @@ message += `• ${name} x${quantity} - ${subtotalTexto}\n`;
     : `ARS $${sum.toLocaleString('es-AR')}`
 }`;
 
-  const url = `https://wa.me/5491168240340?text=${encodeURIComponent(message)}`;
+  const url = `https://wa.me/5491124848452?text=${encodeURIComponent(message)}`;
   localStorage.removeItem('cart');
   window.location.href = url;
 }
