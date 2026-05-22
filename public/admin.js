@@ -62,6 +62,7 @@ function productFromForm(extraImages = []) {
   return {
     name: els.name.value.trim(),
     category: els.category.value,
+    subcategory: els.category.value === 'lenceria' ? els.subcategory.value : '',
     price: Number(els.price.value) || 1,
     description: els.description.value.trim(),
     images: [...typedImages, ...extraImages],
@@ -73,6 +74,7 @@ function fillForm(product) {
   els.productId.value = product.id;
   els.name.value = product.name || '';
   els.category.value = product.category || 'estimuladores';
+  els.subcategory.value = product.subcategory || '';
   els.price.value = product.price || 1;
   els.description.value = product.description || '';
   els.imageUrls.value = (product.images || []).join('\n');
@@ -86,6 +88,7 @@ function clearForm() {
   els.productForm.reset();
   els.productId.value = '';
   els.price.value = 1;
+  els.subcategory.value = '';
   els.visible.checked = true;
   els.imageUrls.value = '';
   els.imageFiles.value = '';
@@ -104,6 +107,7 @@ function renderProductsTable() {
   const filtered = products.filter(product =>
     product.name.toLowerCase().includes(term) ||
     product.category.toLowerCase().includes(term) ||
+    String(product.subcategory || '').toLowerCase().includes(term) ||
     String(product.description || '').toLowerCase().includes(term)
   );
 
@@ -117,6 +121,7 @@ function renderProductsTable() {
           <div class="small text-muted">ID ${product.id}</div>
         </td>
         <td>${escapeHtml(product.category)}</td>
+        <td>${escapeHtml(product.subcategory || '-')}</td>
         <td>${money(product.price)}</td>
         <td>
           <button class="btn btn-sm ${product.visible ? 'btn-success' : 'btn-secondary'}" onclick="toggleVisible(${product.id})">
@@ -255,9 +260,12 @@ async function importProducts(event) {
       const product = {
         name: item.name || item.nombre || '',
         category: item.category || item.categoria || 'lenceria',
+        subcategory: item.subcategory || item.subcategoria || '',
         price: Number(item.price || item.precio || 1),
         description: item.description || item.descripcion || '',
-        images: item.images || item.imagenes || item.image ? [item.image] : [],
+        images: Array.isArray(item.images || item.imagenes)
+          ? (item.images || item.imagenes)
+          : (item.image ? [item.image] : []),
         visible: item.visible !== false
       };
 
@@ -294,7 +302,7 @@ async function resetToDefault() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  ['loginBox','adminPanel','loginForm','adminUser','adminPass','loginError','logoutBtn','productForm','productId','name','category','price','description','imageUrls','imageFiles','visible','formTitle','currentImages','productsTableBody','adminSearch','adminMessage','exportBtn','importFile','resetBtn','cancelBtn'].forEach(id => { els[id] = $(id); });
+  ['loginBox','adminPanel','loginForm','adminUser','adminPass','loginError','logoutBtn','productForm','productId','name','category','subcategory','price','description','imageUrls','imageFiles','visible','formTitle','currentImages','productsTableBody','adminSearch','adminMessage','exportBtn','importFile','resetBtn','cancelBtn'].forEach(id => { els[id] = $(id); });
 
   els.loginForm.addEventListener('submit', handleLogin);
   els.logoutBtn.addEventListener('click', () => { localStorage.removeItem(TOKEN_KEY); setScreen(); });

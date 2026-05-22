@@ -61,6 +61,17 @@
                 </select>
               </div>
               <div class="mb-3">
+                <label class="form-label">Subcategoría</label>
+                <select id="subcategory" class="form-select">
+                  <option value="">Sin subcategoría</option>
+                  <option value="lenceria">Lencería</option>
+                  <option value="lubricantes">Lubricantes</option>
+                  <option value="vigorizantes">Vigorizantes</option>
+                  <option value="perfumes">Perfumes</option>
+                </select>
+                <div class="form-text">Solo se usa dentro de la categoría Lencería.</div>
+              </div>
+              <div class="mb-3">
                 <label class="form-label">Precio ARS</label>
                 <input id="price" type="number" min="1" step="1" class="form-control" value="1" required />
                 <div class="form-text">Usá 1 si querés que diga “Consultar”.</div>
@@ -112,6 +123,7 @@
                     <th>Imagen</th>
                     <th>Producto</th>
                     <th>Categoría</th>
+                    <th>Subcategoría</th>
                     <th>Precio</th>
                     <th>Estado</th>
                     <th class="text-end">Acciones</th>

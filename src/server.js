@@ -60,6 +60,7 @@ function mapProduct(row) {
     id: row.id,
     name: row.name,
     category: row.category,
+    subcategory: row.subcategory || '',
     price: Number(row.price || 1),
     description: row.description || '',
     images: parseImages(row.images),
@@ -71,6 +72,7 @@ function mapProduct(row) {
 
 function cleanProductInput(body) {
   const allowedCategories = ['estimuladores', 'fetish', 'juegos', 'lenceria'];
+  const allowedSubcategories = ['', 'lenceria', 'lubricantes', 'vigorizantes', 'perfumes'];
   let images = body.images;
   if (typeof images === 'string') {
     try {
@@ -82,9 +84,13 @@ function cleanProductInput(body) {
   if (!Array.isArray(images)) images = [];
   images = images.map(x => String(x || '').trim()).filter(Boolean);
 
+  const rawCategory = String(body.category || '').trim();
+  const category = rawCategory === 'lenceria & lubricantes' ? 'lenceria' : rawCategory;
+
   return {
     name: String(body.name || '').trim(),
-    category: allowedCategories.includes(body.category) ? body.category : 'estimuladores',
+    category: allowedCategories.includes(category) ? category : 'estimuladores',
+    subcategory: allowedSubcategories.includes(String(body.subcategory || '').trim()) ? String(body.subcategory || '').trim() : '',
     price: Number(body.price) || 1,
     description: String(body.description || '').trim(),
     images: images.length ? images : [],
@@ -104,6 +110,7 @@ async function initDb() {
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     category TEXT NOT NULL CHECK (category IN ('estimuladores', 'fetish', 'juegos', 'lenceria')),
+    subcategory TEXT DEFAULT '',
     price NUMERIC(12,2) NOT NULL DEFAULT 1,
     description TEXT,
     images JSONB NOT NULL DEFAULT '[]'::jsonb,
@@ -112,8 +119,10 @@ async function initDb() {
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   )`);
 
+  await query("ALTER TABLE products ADD COLUMN IF NOT EXISTS subcategory TEXT DEFAULT ''");
   await query('CREATE INDEX IF NOT EXISTS idx_products_visible ON products(visible)');
   await query('CREATE INDEX IF NOT EXISTS idx_products_category ON products(category)');
+  await query('CREATE INDEX IF NOT EXISTS idx_products_subcategory ON products(subcategory)');
 
   const existingUser = await query('SELECT id, password_hash FROM users WHERE username = $1', [ADMIN_USER]);
   const hash = await bcrypt.hash(ADMIN_PASS, 10);
@@ -131,9 +140,9 @@ async function initDb() {
     for (const product of seedProducts) {
       const clean = cleanProductInput({ ...product, visible: true });
       await query(
-        `INSERT INTO products (name, category, price, description, images, visible)
-         VALUES ($1, $2, $3, $4, $5::jsonb, $6)`,
-        [clean.name, clean.category, clean.price, clean.description, JSON.stringify(clean.images), clean.visible]
+        `INSERT INTO products (name, category, subcategory, price, description, images, visible)
+         VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7)`,
+        [clean.name, clean.category, clean.subcategory, clean.price, clean.description, JSON.stringify(clean.images), clean.visible]
       );
     }
   }
@@ -224,10 +233,10 @@ app.post('/api/products', authRequired, async (req, res, next) => {
     const clean = cleanProductInput(req.body);
     if (!clean.name) return res.status(400).json({ error: 'El nombre es obligatorio' });
     const result = await query(
-      `INSERT INTO products (name, category, price, description, images, visible)
-       VALUES ($1, $2, $3, $4, $5::jsonb, $6)
+      `INSERT INTO products (name, category, subcategory, price, description, images, visible)
+       VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7)
        RETURNING *`,
-      [clean.name, clean.category, clean.price, clean.description, JSON.stringify(clean.images), clean.visible]
+      [clean.name, clean.category, clean.subcategory, clean.price, clean.description, JSON.stringify(clean.images), clean.visible]
     );
     res.status(201).json(mapProduct(result.rows[0]));
   } catch (error) {
@@ -244,10 +253,10 @@ app.put('/api/products/:id', authRequired, async (req, res, next) => {
     if (!clean.name) return res.status(400).json({ error: 'El nombre es obligatorio' });
     const result = await query(
       `UPDATE products
-       SET name=$1, category=$2, price=$3, description=$4, images=$5::jsonb, visible=$6, updated_at=NOW()
-       WHERE id=$7
+       SET name=$1, category=$2, subcategory=$3, price=$4, description=$5, images=$6::jsonb, visible=$7, updated_at=NOW()
+       WHERE id=$8
        RETURNING *`,
-      [clean.name, clean.category, clean.price, clean.description, JSON.stringify(clean.images), clean.visible, id]
+      [clean.name, clean.category, clean.subcategory, clean.price, clean.description, JSON.stringify(clean.images), clean.visible, id]
     );
     res.json(mapProduct(result.rows[0]));
   } catch (error) {
@@ -271,9 +280,9 @@ app.post('/api/products/reset', authRequired, async (_req, res, next) => {
     for (const product of seedProducts) {
       const clean = cleanProductInput({ ...product, visible: true });
       await query(
-        `INSERT INTO products (name, category, price, description, images, visible)
-         VALUES ($1, $2, $3, $4, $5::jsonb, $6)`,
-        [clean.name, clean.category, clean.price, clean.description, JSON.stringify(clean.images), clean.visible]
+        `INSERT INTO products (name, category, subcategory, price, description, images, visible)
+         VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7)`,
+        [clean.name, clean.category, clean.subcategory, clean.price, clean.description, JSON.stringify(clean.images), clean.visible]
       );
     }
     const result = await query('SELECT * FROM products ORDER BY id DESC');

@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS products (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
-  category TEXT NOT NULL CHECK (category IN ('estimuladores', 'fetish', 'juegos', 'lenceria')),
+  category TEXT NOT NULL
+  subcategory TEXT DEFAULT '', CHECK (category IN ('estimuladores', 'fetish', 'juegos', 'lenceria')),
   price NUMERIC(12,2) NOT NULL DEFAULT 1,
   description TEXT,
   images JSONB NOT NULL DEFAULT '[]'::jsonb,

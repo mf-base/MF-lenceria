@@ -1,4 +1,16 @@
 let monedaActual = 'ARS';
+let currentCategory = null;
+let currentSubcategory = 'todos';
+
+const SUBCATEGORY_LABELS = {
+  todos: 'Todos',
+  lenceria: 'Lencería',
+  lubricantes: 'Lubricantes',
+  vigorizantes: 'Vigorizantes',
+  perfumes: 'Perfumes'
+};
+
+const LENCERIA_SUBCATEGORIES = ['todos', 'lenceria', 'lubricantes', 'vigorizantes', 'perfumes'];
 // Swiper para el banner
 new Swiper('.home-swiper', {
   loop: true,
@@ -28,15 +40,23 @@ const baseProducts = [];
 let products = [];
 
 function normalizeProducts(list) {
-  return Array.isArray(list) ? list.filter(Boolean).map((product, index) => ({
-    id: product.id || `producto_${index}_${Date.now()}`,
-    name: String(product.name || '').trim(),
-    category: ['estimuladores', 'fetish', 'juegos', 'lenceria'].includes(product.category) ? product.category : 'estimuladores',
-    price: Number(product.price) || 1,
-    description: String(product.description || '').trim(),
-    images: Array.isArray(product.images) && product.images.length ? product.images : [],
-    visible: product.visible !== false
-  })).filter(product => product.name && product.visible) : [];
+  return Array.isArray(list) ? list.filter(Boolean).map((product, index) => {
+    const rawCategory = String(product.category || '').trim();
+    const category = ['estimuladores', 'fetish', 'juegos', 'lenceria', 'lenceria & lubricantes'].includes(rawCategory)
+      ? (rawCategory === 'lenceria & lubricantes' ? 'lenceria' : rawCategory)
+      : 'estimuladores';
+
+    return {
+      id: product.id || `producto_${index}_${Date.now()}`,
+      name: String(product.name || '').trim(),
+      category,
+      subcategory: String(product.subcategory || '').trim(),
+      price: Number(product.price) || 1,
+      description: String(product.description || '').trim(),
+      images: Array.isArray(product.images) && product.images.length ? product.images : [],
+      visible: product.visible !== false
+    };
+  }).filter(product => product.name && product.visible) : [];
 }
 
 async function loadProductsFromApi() {
@@ -79,11 +99,16 @@ function renderProductsGrid() {
   categoryContainers.forEach(container => container.innerHTML = '');
 
   products.forEach((product, index) => {
+    if (currentCategory && product.category !== currentCategory) return;
+    if (currentCategory === 'lenceria' && currentSubcategory !== 'todos' && product.subcategory !== currentSubcategory) return;
+
     const container = document.getElementById(`cat-${product.category}`);
     if (!container) return;
 
     const col = document.createElement('div');
-    col.className = 'col-6 col-md-4 col-lg-2 mb-4';
+    col.className = 'col-6 col-md-4 col-lg-2 mb-4 product-item';
+    col.dataset.category = product.category;
+    col.dataset.subcategory = product.subcategory || '';
     const swiperId = `swiperProduct${index}`;
     const safeName = escapeAttr(product.name);
     const safeImages = (product.images || []).map(img => `<div class="swiper-slide"><img src="${escapeAttr(img)}" alt="${safeName}"></div>`).join('');
@@ -164,12 +189,49 @@ modalImage.alt = product.name;
   document.getElementById('productModal').addEventListener('hidden.bs.modal', () => clearInterval(modalSlideshowInterval), { once: true });
 }
 
+function renderSubcategoryTabs(category) {
+  const container = document.getElementById('subcategoryTabs');
+  if (!container) return;
+
+  if (category !== 'lenceria') {
+    container.style.display = 'none';
+    container.innerHTML = '';
+    currentSubcategory = 'todos';
+    return;
+  }
+
+  container.style.display = 'flex';
+  container.innerHTML = LENCERIA_SUBCATEGORIES.map(sub => `
+    <button type="button" class="subcategory-tab ${currentSubcategory === sub ? 'active' : ''}" data-subcategory="${sub}">
+      ${SUBCATEGORY_LABELS[sub]}
+    </button>
+  `).join('');
+
+  container.querySelectorAll('.subcategory-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      currentSubcategory = tab.getAttribute('data-subcategory') || 'todos';
+      renderSubcategoryTabs('lenceria');
+      showCategory('lenceria');
+    });
+  });
+}
+
+function showCategory(category) {
+  currentCategory = category;
+  document.querySelectorAll('.catalog-category').forEach(div => div.style.display = 'none');
+  const activeContainer = document.getElementById(`cat-${category}`);
+  if (activeContainer) activeContainer.style.display = 'flex';
+  renderProductsGrid();
+  applySearchFilter();
+}
+
 // Mostrar catálogo por categoría
 document.querySelectorAll('.category-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const category = btn.getAttribute('data-category');
-    document.querySelectorAll('.catalog-category').forEach(div => div.style.display = 'none');
-    document.getElementById(`cat-${category}`).style.display = 'flex';
+    currentSubcategory = 'todos';
+    renderSubcategoryTabs(category);
+    showCategory(category);
   });
 });
 
@@ -308,20 +370,25 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCart();
 });
 
-document.getElementById('searchInput').addEventListener('input', function () {
-  const term = this.value.toLowerCase();
+function applySearchFilter() {
+  const input = document.getElementById('searchInput');
+  const term = String(input?.value || '').toLowerCase();
   let visibleCount = 0;
 
-  document.querySelectorAll('.product-card').forEach(card => {
-    const name = card.querySelector('h5')?.textContent.toLowerCase();
+  document.querySelectorAll('.catalog-category[style*="flex"] .product-item').forEach(item => {
+    const card = item.querySelector('.product-card');
+    const name = card?.querySelector('h5')?.textContent.toLowerCase() || '';
     const isVisible = name.includes(term);
-    card.style.display = isVisible ? 'block' : 'none';
+    item.style.display = isVisible ? '' : 'none';
     if (isVisible) visibleCount++;
   });
 
   const noResultsMsg = document.getElementById('noResultsMsg');
-  if (noResultsMsg) noResultsMsg.style.display = visibleCount === 0 ? 'block' : 'none';
-});
+  if (noResultsMsg) noResultsMsg.style.display = visibleCount === 0 && currentCategory ? 'block' : 'none';
+}
+
+const searchInput = document.getElementById('searchInput');
+if (searchInput) searchInput.addEventListener('input', applySearchFilter);
 
 
 
